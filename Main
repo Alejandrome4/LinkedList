@@ -1,0 +1,175 @@
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.Scanner;
+
+public class Main {
+
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+
+        ArrayList<Album>listaAlbumes = new ArrayList<>();
+
+        Album goosebumps=new Album("Goosebumps", "Travis Scott");
+
+        goosebumps.addSong("Goosebumps", 4.03);
+        goosebumps.addSong("Sicko Mode", 5.12);
+        goosebumps.addSong("Highest in the Room", 2.55);
+        goosebumps.addSong("Butterfly Effect", 3.10);
+
+        listaAlbumes.add(goosebumps);
+
+        Album easyMoney = new Album("Easy Money Baby", "Myke Towers");
+
+        easyMoney.addSong("La Playa", 3.20);
+        easyMoney.addSong("Si Se Da", 3.45);
+        easyMoney.addSong("Diosa", 3.15);
+        easyMoney.addSong("Girl", 3.05);
+
+        listaAlbumes.add(easyMoney);
+
+        System.out.println("=== ÁLBUMES DISPONIBLES ===\n");
+
+        for (Album album : listaAlbumes) {
+            System.out.println("Álbum: " + album.getNombre() + " - " + album.getArtista());
+            for (Cancion c : album.getCanciones()) {
+                System.out.println("   " + c);
+            }
+            System.out.println();
+        }
+
+        LinkedList<Cancion> playListCanciones = new LinkedList<>();
+
+        listaAlbumes.get(0).addToPlayList("Goosebumps", playListCanciones);
+        listaAlbumes.get(0).addToPlayList("Sicko Mode", playListCanciones);
+        listaAlbumes.get(1).addToPlayList("La Playa", playListCanciones);
+        listaAlbumes.get(1).addToPlayList("Diosa", playListCanciones);
+        listaAlbumes.get(0).addToPlayList("Butterfly Effect", playListCanciones);
+
+        play(playListCanciones);
+    }
+
+    private static void play(LinkedList<Cancion> playList) {
+
+        if (playList.isEmpty()) {
+            System.out.println("La lista está vacía.");
+            return;
+        }
+
+        ListIterator<Cancion> it = playList.listIterator();
+        boolean haciaAdelante = true;
+
+        printMenu();
+        System.out.println("\nReproduciendo: " + it.next());
+
+        boolean salir = false;
+
+        while (!salir) {
+
+            int opcion = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (opcion) {
+
+                case 0:
+                    System.out.println("Saliendo del reproductor...");
+                    salir = true;
+                    break;
+
+                case 1:
+                    if (!haciaAdelante) {
+                        if (it.hasNext()) {
+                            it.next();
+                        }
+                        haciaAdelante = true;
+                    }
+
+                    if (it.hasNext()) {
+                        System.out.println("Ahora suena:" + it.next());
+                    } else {
+                        System.out.println("Has llegado al final de la lista.");
+                        haciaAdelante= false;
+                    }
+                    break;
+
+                case 2:
+                    if (haciaAdelante) {
+                        if(it.hasPrevious()) {
+                            it.previous();
+                        }
+                        haciaAdelante =false;
+                    }
+
+                    if (it.hasPrevious()) {
+                        System.out.println("Ahora suena: " + it.previous());
+                    } else {
+                        System.out.println("Estas al principio de la lista.");
+                        haciaAdelante =true;
+                    }
+                    break;
+
+                case 3:
+                    if (haciaAdelante) {
+                        if (it.hasPrevious()) {
+                            System.out.println("Repitiendo: " + it.previous());
+                            haciaAdelante = false;
+                        }
+                    } else {
+                        if (it.hasNext()) {
+                            System.out.println("Repitiendo: " + it.next());
+                            haciaAdelante = true;
+                        }
+                    }
+                    break;
+
+                case 4:
+                    printList(playList);
+                    break;
+
+                case 5:
+                    printMenu();
+                    break;
+
+                case 6:
+                    if (playList.size() > 0){
+                        it.remove();
+                        System.out.println("Canción eliminada.");
+
+                        if (it.hasNext()) {
+                            System.out.println("Ahora suena:"+ it.next());
+                        } else if (it.hasPrevious()) {
+                            System.out.println("Ahora suena:"+it.previous());
+                        }
+                    }
+                    break;
+
+                default:
+                    System.out.println("Opción no válida. Intentalo de nuevo.");
+            }
+        }
+    }
+
+    private static void printMenu() {
+        System.out.println("\n=== MENÚ ===");
+        System.out.println("0 - Salir");
+        System.out.println("1 - Siguiente canción");
+        System.out.println("2 - Canción anterior");
+        System.out.println("3 - Repetir canción");
+        System.out.println("4 - Mostrar lista");
+        System.out.println("5 - Mostrar menú");
+        System.out.println("6 - Eliminar canción actual");
+    }
+
+    private static void printList(LinkedList<Cancion> playList) {
+
+        System.out.println("\n== LISTA DE REPRODUCCOÓN=");
+
+        int index =1;
+        for (Cancion c : playList) {
+            System.out.println(index + "." + c);
+            index++;
+        }
+
+    }
+}
